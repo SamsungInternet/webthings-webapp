@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<!-- 
+     Copyright 2018-present Samsung Electronics France SAS, and other contributors
+     This Source Code Form is subject to the terms of the Mozilla Public
+     License, v. 2.0. If a copy of the MPL was not distributed with this
+     file, You can obtain one at http://mozilla.org/MPL/2.0/.*
+  -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="theme-color" content="#317EFB"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="WebThings" />
+<title>WebThings</title>
+<link rel="icon" type="image/png" href="images/16x16/logo.png">
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" type="text/css" href="lib/tau/mobile/theme/default/tau.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<script type="text/javascript" src="lib/tau/mobile/js/tau.min.js" data-build-remove="false"></script>
+<script src="js/index.js"></script>
+</head>
+
+<body>
+<div class="ui-page" id="main">
+
+<div class="ui-header">
+<form name="form">
+<input type="text" id="url"
+       placeholder="URL (ie: http://gateway.local:8080)"
+       />
+<input type="password" id="token"
+       placeholder="Token (after connect)"
+       />
+</form>
+</div><!-- /header -->
+  
+<div class="ui-content">
+<ul class="ui-listview"  id="items">
+<li> WebThings webapp browser for Mozilla IoT Gateway</li>
+<li> Usage: </li>
+<li> Press update to refresh</li>
+<li> Press reset to forget credentials</li>
+<li> Gateway address can be changed</li>
+<li> ie: https://$name.mozilla-iot.org</li>
+<li> Misc: </li>
+<li> This app is using TAU </li>
+<li> it was tested on Tizen TM1 </li>
+</ul>
+</div>
+
+<div class="ui-footer">
+<a href="#" class="ui-btn" id="run">Connect</a>
+<a href="#" class="ui-btn" id="reset">Reset</a>
+<a href="#" class="ui-btn" id="about">About</a>
+</div>
+
+</div>
+</body>
+</html>
