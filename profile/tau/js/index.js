@@ -115,7 +115,7 @@ app.put = function(endpoint, payload, callback)
 app.updateView = function(model, view)
 {
   var self = this;
-  if ( model.type == "onOffSwitch" ) {
+  if (model.type === "binarySensor"  || model.type === "onOffSwitch") {
     var endpoint = model.properties.on.href;
     this.get(endpoint, function(err, data) {
       view.local.widget.checked = !!(JSON.parse(data).on);
@@ -125,6 +125,37 @@ app.updateView = function(model, view)
       view.local.button.innerText = JSON.parse(data).level;
     });
   }
+};
+
+app.createBinarySensorView = function(li, model)
+{
+  var self = this;
+  li.setAttribute('class', 'ui-li-static ui-li-1line-btn1');
+  var div = document.createElement('div');
+  div.setAttribute('class', 'ui-btn.ui-btn-box-s ui-toggle-container');
+
+  var widget = li.local.widget = document.createElement('input');
+  widget.setAttribute('type', 'checkbox');
+  //TODO: widget.tau = tau.widget.ToggleSwitch(radio);
+  widget.setAttribute('class','ui-toggle-switch');
+  widget.setAttribute('data-tau-built', "ToggleSwitch");
+  widget.setAttribute('data-tau-name', "ToggleSwitch");
+  widget.setAttribute('aria-disabled', "false");
+  widget.setAttribute('data-tau-bound', "ToggleSwitch");
+  var endpoint = model.properties.on.href;
+  widget.addEventListener('click', function(){
+    widget.disabled = true;
+    self.get(model.properties.on.href, function(err, data) {
+      widget.disabled = false;
+      widget.checked = !! JSON.parse(data).on;
+    });
+  });
+  div.appendChild(widget);
+  var handlerdiv = document.createElement('div');
+  handlerdiv.setAttribute('class', 'ui-switch-handler');
+  div.appendChild(handlerdiv);
+  li.appendChild(div);
+  return li;
 };
 
 app.createOnOffSwitchView = function(li, model)
@@ -160,7 +191,9 @@ app.createView = function(model)
   li.local.model = model;
 
   model.local = {};
-  if (model.type == "onOffSwitch" || model.type == "dimmableColorLight") {
+  if (model.type === "binarySensor") {
+    model.local.view = this.createBinarySensorView(li, model);
+  } else if (model.type === "onOffSwitch" || model.type === "dimmableColorLight") {
     model.local.view = this.createOnOffSwitchView(li, model);
   } else {
     li.setAttribute('class', 'ui-li-static');
