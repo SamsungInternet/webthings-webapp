@@ -120,6 +120,10 @@ app.updateView = function(model, view)
     this.get(endpoint, function(err, data) {
       view.local.widget.checked = !!(JSON.parse(data).on);
     });
+  } else if (model.type === "multiLevelSensor") {
+    this.get(model.properties.level.href, function(err, data) {
+      view.local.widget.innerText = JSON.parse(data).level;
+    });
   } else {
     console.log("TODO: implement " + model.type);
   }
@@ -195,6 +199,53 @@ app.createOnOffSwitchView = function(li, model)
   return li;
 };
 
+app.createMultiLevelSensorView = function(li, model)
+{
+  var self = this;
+  var widget = li.local.widget = document.createElement('button');
+  //widget.tau = tau.widget.Button(widget); //TODO
+  widget.setAttribute('class','ui-btn ui-inline');
+  widget.setAttribute('data-tau-built', "Button");
+  widget.setAttribute('data-tau-name', "Button");
+  widget.setAttribute('aria-disabled', "false");
+  widget.setAttribute('data-tau-bound', "Button");
+  widget.innerText = "?";
+  widget.local = {};
+  widget.addEventListener('click', function(){
+    widget.local.interval = setTimeout(function(){
+      if (widget.disabled) {
+        self.put(model.properties.on.href, { on: true }, function(err, data) {
+          data = JSON.parse(data);
+          widget.disabled = false;
+          widget.innerText = (data.on) ? "ON" : "OFF";
+        });
+      }
+      widget.disabled = false;
+    }, 2000);
+
+    widget.disabled = true;
+    self.get(model.properties.on.href, function(err, data) {
+      data = JSON.parse(data);
+      if (!data.on) {
+        widget.innerText = "OFF";
+      } else {
+        self.get(model.properties.level.href, function(err, data) {
+          data = JSON.parse(data);
+          clearInterval(widget.local.interval);
+          widget.disabled = false;
+          widget.innerText = (data) ? data.level : "?";
+        });
+      }
+    });
+  });
+  li.setAttribute('class', 'ui-li-static ui-li-1line-btn1');
+  var div = document.createElement('div');
+  div.setAttribute('class', 'ui-btn.ui-btn-box-s ui-toggle-container');
+  div.appendChild(widget);
+  li.appendChild(div);
+  return li;
+};
+
 app.createView = function(model)
 {
   var li = document.createElement('li');
@@ -209,6 +260,8 @@ app.createView = function(model)
     model.local.view = this.createBinarySensorView(li, model);
   } else if (model.type === "onOffSwitch" || model.type === "dimmableColorLight") {
     model.local.view = this.createOnOffSwitchView(li, model);
+  } else if (model.type == "multiLevelSensor") {
+    model.local.view = this.createMultiLevelSensorView(li, model);
   } else {
     li.setAttribute('class', 'ui-li-static');
     this.log("TODO: implement " + model.type);
