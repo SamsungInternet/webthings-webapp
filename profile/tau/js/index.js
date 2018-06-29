@@ -281,12 +281,16 @@ app.query = function(url)
     list.innerHTML = "";  // Clean list
     var listWidget;
     for (var index=0; index < items.length; index++) {
-      var model = items[index];
-      var view = self.createView(model);
-      self.updateView(model, view);
-      list.appendChild(view);
-      listWidget = tau.widget.Listview(list);
-      listWidget.refresh();
+      try {
+        var model = items[index];
+        var view = self.createView(model);
+        self.updateView(model, view);
+        list.appendChild(view);
+        listWidget = tau.widget.Listview(list);
+        listWidget.refresh();
+      } catch(e) {
+        self.log(e);
+      }
     };
   });
 };
