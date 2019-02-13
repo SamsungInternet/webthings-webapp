@@ -9,13 +9,10 @@
   <head>
     <meta charset="utf-8">
     <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+    <script>var app = {}; </script>
     <script src="js/index.js"></script>
     <script src="js/aframe/index.js"></script>
   </head>
-
-<script>
-</script>  
-
 <script>
 AFRAME.registerComponent('console', {
   init: function () {
@@ -24,10 +21,10 @@ AFRAME.registerComponent('console', {
     let token = localStorage['token'];
     let value = `Loading: ${url}`;
     this.el.setAttribute('text', 'value', value);
-    app.el = this.el;
-    app.query(url + endpoint, token);
-  }
-});
+      viewer.el = this.el;
+      viewer.query(url + endpoint, token);
+    }
+  });
 </script>
 <body>
     <a-scene background="color: #ECECEC">
