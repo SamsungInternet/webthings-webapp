@@ -7,35 +7,32 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/
  */
 
-app.log = function(text)
-{
-  console.log(text);
-}
+var viewer = {};
 
-app.createViewUnknown = function(model)
+viewer.createViewUnknown = function(model)
 {
   let view;
-  var value = app.el.getAttribute('text', value).value;
+  var value = viewer.el.getAttribute('text', value).value;
   if (model.type) {
     value += "\nTODO: " +  model.type;
   }
-  app.el.setAttribute('text', 'value', value);
+  viewer.el.setAttribute('text', 'value', value);
   return view;
 }
 
-app.createViewOnOffSwitch = function (model)
+viewer.createViewOnOffSwitch = function (model)
 {
   // TODO: implement this
-  return app.createViewUnknown(model);
+  return viewer.createViewUnknown(model);
 }
 
-app.createViewMultilevelSensor = function (model)
+viewer.createViewMultilevelSensor = function (model)
 {
   // TODO: implement this
-  return app.createViewUnknown(model);
+  return viewer.createViewUnknown(model);
 }
 
-app.createView = function(model)
+viewer.createView = function(model)
 {
   var view;
   console.log(model.type);
@@ -49,10 +46,10 @@ app.createView = function(model)
   }
 }
 
-app.query = function(url, token)
+viewer.query = function(url, token)
 {
   let self = this;
-  this.get(url, token, function(err, data) {
+  app.get(url, token, function(err, data) {
     let items = data && JSON.parse(data) || [];
     let index;
     for (index=0; index < items.length; index++) {
@@ -62,3 +59,4 @@ app.query = function(url, token)
     };
   });
 }
+
