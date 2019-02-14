@@ -24,7 +24,9 @@ help: README.md
 
 branches+=base/master
 branches+=tizen/master
+branches+=aframe/master
 branches+=sandbox/rzr/pwa/master
+
 
 %:
 	mkdir -p "$@"
