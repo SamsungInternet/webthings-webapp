@@ -1,6 +1,23 @@
-## WEBTHINGS WEBAPP: ##
+# WEBTHINGS WEBAPP: #
 
-Standalone application to browse "Webthings" connected to "Mozilla IoT Gateway"
+Standalone applications to browse "Webthings" connected to "Mozilla IoT Gateway"
+
+
+## CONTENTS: ##
+
+Several applications are developped using different toolkits but tied by common code,
+each code base is stored in git branches, and can be compared from single dir.
+
+For developer conveinance master branch is only providing facilities,
+to fetch each app (branch) in top directory, using:
+
+```sh
+git clone https://github.com/samsunginternet/webthings-webapp
+cd webthings-webapp
+make
+cd base/master
+x-www-browser index.html
+```
 
 ## USAGE: ##
 
@@ -32,8 +49,8 @@ For reference, It was tested on Tizen TM1 reference device.
 
 ## RESOURCES: ##
 
+* https://github.com/rzr/webthing-iotjs/wiki/WebApp
 * https://iot.mozilla.org/
-* https://s-opensource.org/category/internet-of-things/
 * https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
 * https://wiki.tizen.org/TM1
 * https://wiki.tizen.org/index.php?title=User:Pcoval
