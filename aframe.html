@@ -23,6 +23,7 @@ AFRAME.registerComponent('console', {
     let token = localStorage['token'];
     let value = `Loading: ${url}`;
     this.el.setAttribute('text', 'value', value);
+      // global viewer object defined in js/aframe/index.js
       viewer.el = this.el;
       viewer.query(url + endpoint, token);
     }
@@ -32,8 +33,7 @@ AFRAME.registerComponent('console', {
     <a-scene background="color: #ECECEC">
       <a-entity console
                 text='value: Console'
-                position="1, 0, -3"
-                scale="10, 10, 10"
+                position="-0.5 0 -1"
                 />
     </a-scene>
   </body>
