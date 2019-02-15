@@ -13,32 +13,27 @@ viewer.y = 0;
 viewer.createViewUnknown = function(model)
 {
   let view;
-  var value = viewer.el.getAttribute('text', value).value;
-  if (model.type) {
-    value += `\n${model.name} (${model.type})`;
-  }
   //viewer.el.setAttribute('text', 'value', value);
 
   // https://github.com/gmarty/aframe-ui-components
   // https://github.com/caseyyee/aframe-ui-widgets
   // https://github.com/rdub80/aframe-gui
-  var newEl = document.createElement( "a-sphere" )
-  newEl.setAttribute( "position", "0 " + ( viewer.y += 0.3 ) + " 0" )
-  newEl.setAttribute( "radius", "0.1" )
-  newEl.setAttribute( "color", "lightblue" )
-  var readwrite = true
+  var newEl = document.createElement( "a-sphere" );
+  newEl.setAttribute( "position", "0 " + ( viewer.y += 0.3 ) + " 0" );
+  newEl.setAttribute( "radius", "0.1" );
+  newEl.setAttribute( "color", "lightblue" );
+  var readwrite = true; // for now fixed
   if ( readwrite ){
-    var halo = document.createElement( "a-sphere" )
-    halo.setAttribute( "radius", "0.11" )
-    halo.setAttribute( "opacity", 0.2 )
-    newEl.appendChild( halo )
+    var halo = document.createElement( "a-sphere" );
+    halo.setAttribute( "radius", "0.11" );
+    halo.setAttribute( "opacity", 0.2 );
+    newEl.appendChild( halo );
   }
-  var nameEl = document.createElement( "a-entity" )
+  var nameEl = document.createElement( "a-entity" );
   nameEl.setAttribute( "text", "value", `\n${model.name} (${model.type})` );
-  //nameEl.setAttribute( "scale", "3 3 3" )
-  nameEl.setAttribute( "position", "0.7 0 0" )
-  newEl.appendChild( nameEl )
-  viewer.el.appendChild( newEl )
+  nameEl.setAttribute( "position", "0.7 0 0" );
+  newEl.appendChild( nameEl );
+  viewer.el.appendChild( newEl );
 
   return view;
 }
