@@ -17,6 +17,8 @@
 AFRAME.registerComponent('console', {
   init: function () {
     let url = localStorage['url'] || 'http://gateway.local:8080';
+    if (!localStorage['url'])
+	    console.warn( "Gateway token unset. Visit your gateway Settings -> Developer -> Create local authorization" )
     let endpoint = localStorage['endpoint'] || '/things';
     let token = localStorage['token'];
     let value = `Loading: ${url}`;
