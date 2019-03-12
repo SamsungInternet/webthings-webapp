@@ -73,7 +73,13 @@ viewer.query = function(url, token)
     for (index=0; index < items.length; index++) {
       let model = items[index];
       model.local = {};
+      if (model.type === "thing") {
+        console.log(model);
+        url = localStorage['url'] + model.href;
+        model.local.view = viewer.query(url, token);
+      } else {
       model.local.view = self.createView(model);
+      } 
     };
   });
 }
