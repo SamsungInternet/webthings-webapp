@@ -6,37 +6,42 @@
      License, v. 2.0. If a copy of the MPL was not distributed with this
      file, You can obtain one at http://mozilla.org/MPL/2.0/
   -->
+<html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
-    <script>var app = {}; </script>
+    <script>var app = { viewer: {} }; </script>
     <script src="js/index.js"></script>
     <script src="js/aframe/index.js"></script>
-  </head>
-<script>
+
+    <script>
+AFRAME.registerComponent('root', {
+  init: function () {
+    app.viewer.root = this.el;
+    app.viewer.start();
+    }
+  }
+);
+
 AFRAME.registerComponent('console', {
   init: function () {
-    if (!localStorage['url']){
-      console.warn( "Gateway token unset. Visit your gateway Settings -> Developer -> Create local authorization" );
-      return;
-    }
-    let url = localStorage['url'];
-    let endpoint = localStorage['endpoint'] || '/things';
-    let token = localStorage['token'];
-    let value = `Loading: ${url}`;
-    this.el.setAttribute('text', 'value', value);
-    // global viewer object defined in js/aframe/index.js
-    viewer.el = this.el;
-    viewer.query(url + endpoint, token);
-    }
-  });
-</script>
-<body>
+    app.viewer.log = this.el;
+    app.viewer.verbose(document.location);
+  }
+}
+);
+    </script>
+  </head>
+  <body>
     <a-scene background="color: #ECECEC">
-      <a-entity console
-                text='value: Console'
-                position="-0.5 0 -1"
-                />
+      <a-entity root />
+      <a-text id="console" console
+              value="console:"
+              position="0 -2 0"
+              rotation="-90 0 0"
+              scale="4 4 4"
+              color="#808080"
+              />
     </a-scene>
   </body>
 </html>
