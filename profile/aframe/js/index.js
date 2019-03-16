@@ -18,6 +18,9 @@ viewer.verbose = !console.log || function(text) {
   let value = 0;
   if (this.log && app.debug) {
     value = this.log.getAttribute('text', value).value || '';
+    if (value.length > 1024) {
+      value = '(...)\n';
+    }
     value = `${value}\n${text}`;
     this.log.setAttribute('text', 'value', value);
   }
