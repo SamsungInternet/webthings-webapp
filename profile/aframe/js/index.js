@@ -8,21 +8,26 @@
  */
 
 const viewer = app.viewer;
-
+app.viewerUrl = 'aframe.html'; // TODO
 viewer.count = 0;
 
 viewer.rotation = [ 0, 0, 0];
-
-viewer.verbose = !console.log || function(text) {
+viewer.log = !console.log || function(text) {
+  if (!app.devel) {
+    return;
+  }
   console.log(text);
   let value = 0;
-  if (this.log && app.debug) {
-    value = this.log.getAttribute('text', value).value || '';
+  if (this.log && app.devel) {
+    const el = document.getElementById('console');
+    if (el.getAttribute('text')) {
+      value = el.getAttribute('text').value || '';
+    }
     if (value.length > 1024) {
       value = '(...)\n';
     }
-    value = `${value}\n${text}`;
-    this.log.setAttribute('text', 'value', value);
+    value = `${text}\n${value}`;
+    el.setAttribute('text', 'value', value);
   }
 };
 
@@ -30,7 +35,7 @@ viewer.verbose = !console.log || function(text) {
 viewer.poll = function(thing, callback) {
   const self = this;
   const url = `${localStorage.url + thing.href}/properties`;
-  self.verbose(`fetch: ${url}`);
+  self.log(`fetch: ${url}`);
   fetch(url,
         {headers: {
           'Content-Type': 'application/json',
@@ -39,12 +44,12 @@ viewer.poll = function(thing, callback) {
         }}
   )
     .then(function(response) {
-      self.verbose(`recieved:`);
+      self.log(`recieved:`);
       return response.json();
     })
     .then(function(json) {
-      self.verbose(`parsed: ${json}`);
-      self.verbose(json);
+      self.log(`parsed: ${json}`);
+      self.log(json);
       if (callback) {
         callback((json === null), json);
       }
@@ -59,7 +64,7 @@ viewer.startPoll = function(thing, callback, delay) {
   }
   interval = setInterval(function() {
     if (app.pause) {
-      self.verbose(`stopping: ${app.pause}`);
+      self.log(`stopping: ${app.pause}`);
       inverval = clearInterval(interval);
     }
     self.poll(thing, callback);
@@ -78,8 +83,8 @@ viewer.listenThing = function(thing, callback) {
   if (useWebsockets) {
     ws = new WebSocket(wsUrl);
     ws.onclose = function(evt) {
-      self.verbose(wsUrl);
-      self.verbose(evt);
+      self.log(wsUrl);
+      self.log(evt);
       // CLOSE_ABNORMAL
       if (evt.code === 1006) {
         self.startPoll(thing, callback);
@@ -94,7 +99,7 @@ viewer.listenThing = function(thing, callback) {
         try {
           data = JSON.parse(evt.data).data;
         } catch (e) {
-          self.verbose(`error: ${e}`);
+          self.log(`error: ${e}`);
         }
         callback((data == null), data);
       }
@@ -104,7 +109,7 @@ viewer.listenThing = function(thing, callback) {
   }
 };
 
-
+// TO relocate a-frame-io-widget.js ?
 viewer.createPropertyElement = function(model, name) {
   const self = this;
   const property = model.properties[name];
@@ -121,43 +126,47 @@ viewer.createPropertyElement = function(model, name) {
   view.setAttribute('width', 1);
   view.setAttribute('align', 'center');
   const id = `${this.count++}`;
-  self.verbose(`createPropertyElement: ${type}/${semType}`);
+  self.log(`createPropertyElement: ${type}/${semType}`);
   switch (type) {
     case 'boolean':
       el = document.createElement('a-entity');
       el.setAttribute('rotation', '90 0 0');
+      el.setAttribute('scale', '.8 .8 .8');
       el.setAttribute('ui-toggle', 'value', 0);
       break;
     case 'number':
     case 'integer':
       el = document.createElement('a-entity');
       el.setAttribute('rotation', '90 0 0');
+      el.setAttribute('scale', '.8 .8 .8');
       el.setAttribute('ui-slider', 'value', 0);
       el.setAttribute('ui-slider', 'min', 0);
       el.setAttribute('ui-slider', 'max', 100); // TODO
       break;
     case 'string':
       if (semType === 'ColorProperty' || name === 'color') { // TODO
-        el = document.createElement('a-sphere');
-        el.setAttribute('color', '#FF0000');
-        el.setAttribute('radius', '0.1');
+        el = document.createElement('a-entity');
+        el.setAttribute('ui-button', 'size', '0.1');
+        el.setAttribute('rotation', '90 0 0');
+        el.setAttribute('scale', '.8 .8 .8');
       } else {
-        self.verbose(model);
-        el = document.createElement('a-box');
-        el.setAttribute('color', '#00FF00');
-        el.setAttribute('scale', '.1 .1 .1');
+        el = document.createElement('a-entity');
+        el.setAttribute('ui-rotary', 'value', 0); // TODO: updateSchema
+        el.setAttribute('rotation', '90 0 0');
+        el.setAttribute('scale', '.8 .8 .8');
       }
       break;
     default:
-      self.verbose(`TODO: ${type}`);
-      el = document.createElement('a-octahedron');
-      el.setAttribute('color', '#FF0000');
+      self.log(`TODO: ${type}`);
+      el = document.createElement('a-box');
+      el.setAttribute('scale', '.2 .2 .2');
       el.setAttribute('radius', '0.1');
+      el.setAttribute('color', '#BADC0D');
   }
   el.setAttribute('position', '0 0.2 0');
   el.setAttribute('id', `widget-${id}`);
   el.addEventListener('change', function(e) {
-    if (e.detail) {
+    if (e.detail && !property.readOnly) {
       const payload = {};
       payload[name] = !!(e.detail.value !== 0);
       app.put(endpoint, payload, function(res, data) {
@@ -207,14 +216,16 @@ viewer.startUpdateProperty = function(model, name, view) {
           el.setAttribute('ui-slider', 'value', value);
           break;
 
-
         case 'string':
-          view.setAttribute('text', 'value',
-                            `${view.getAttribute('text', 'value').value
-                            }\n${t}\n${data})`);
+          this.log(data);
+          if (semType === 'ColorProperty' || name === 'color') { // TODO
+            el.setAttribute('ui-button', 'color', value);
+          } else {
+            el.setAttribute('ui-rotary', 'value', value.length);
+          }
           break;
         default:
-          self.verbose('TODO:');
+          self.log('TODO:');
       }
     }
   });
@@ -226,26 +237,32 @@ viewer.updateThingView = function(err, data, model) {
   if (err) {
     throw err;
   }
-  self.verbose('updateThingView');
-  self.verbose(model);
+  self.log(`updateThingView: ${data}`);
+  self.log(data);
+  self.log(model);
   for (const name in data) {
-    self.verbose('updateThingView/prop/${name}');
     const type = model.properties[name].type;
+    const semType = model.properties[name]['@type'];
     const el = model.local[name].view.children[0];
+    self.log(`updateThingView/prop/${name}:${type}`);
     switch (type) { // TODO: mapping design pattern
       case 'boolean':
         el.setAttribute('ui-toggle', 'value', data[name] ? 1 : 0);
         break;
       case 'number':
       case 'integer':
-        // TODO update in widget
+        self.log(`// TODO update in widget${data[name]}`);
         el.setAttribute('ui-slider', 'value', data[name]);
         break;
       case 'string':
-        el.setAttribute(name, data[name]); // TODO
+        if (semType === 'ColorProperty' || name === 'color') { // TODO
+          el.setAttribute('ui-button', 'baseColor', data[name]);
+        } else {
+          el.setAttribute('ui-rotary', 'value', data[name].length);
+        }
         break;
       default:
-        self.verbose(`TODO: callback: ${name} : ${type}`);
+        self.log(`TODO: callback: ${name} : ${type}`);
     }
   }
 };
@@ -255,8 +272,8 @@ viewer.appendThing = function(model) {
   const self = this;
   const view = null;
   let propertyName = null;
-  // this.verbose(`appendThing: ${model.type}`);
-  // this.verbose(model);
+  // this.log(`appendThing: ${model.type}`);
+  // this.log(model);
   model.local = {};
   for (propertyName in model.properties) {
     const el = this.createPropertyElement(model, propertyName);
@@ -267,13 +284,12 @@ viewer.appendThing = function(model) {
     }
     el.object3D.rotateY(this.rotation[1]);
     el.object3D.rotateX(this.rotation[0]);
-    el.object3D.translateY(1.8);
-    const step = 9;
-    el.object3D.translateZ(-2);
+    const step = 8;
+    el.object3D.translateZ(-4);
     this.rotation[1] += (2 * Math.PI / step) / Math.cos(this.rotation[0]);
 
     if (this.rotation[1] >= 2 * Math.PI) {
-      this.rotation[1] = 0;
+      this.rotation[1] = 2 * Math.PI - this.rotation[1];
       this.rotation[0] += 2 * Math.PI / 2 / 2 / step;
       // TODO : bottom
     }
@@ -281,6 +297,8 @@ viewer.appendThing = function(model) {
         Math.ceil(2 * Math.PI / 2 / 2 / step) * step) {
       this.rotation[0] = 0;
     }
+    el.setAttribute('scale', '2 2 2');
+
     this.root.appendChild(el);
     model.local[propertyName] = {view: el};
   }
@@ -298,7 +316,7 @@ viewer.appendThing = function(model) {
 
 viewer.handleResponse = function(err, data) {
   const self = viewer;
-  // self.verbose(`handleResponse: ${typeof data}`);
+  // self.log(`handleResponse: ${typeof data}`);
   if (err || !data) {
     console.error(err);
     throw err;
@@ -308,7 +326,7 @@ viewer.handleResponse = function(err, data) {
   if (typeof data === 'string' && data) {
     model = data && JSON.parse(data);
   }
-  // self.verbose(JSON.stringify(model));
+  // self.log(JSON.stringify(model));
   if (Array.isArray(model)) {
     let index;
     for (index = 0; index < model.length; index++) {
@@ -324,16 +342,16 @@ viewer.query = function(endpoint) {
   if (!endpoint) {
     endpoint = localStorage.endpoint;
   }
-  // this.verbose(`log: query: ${endpoint}`);
+  // this.log(`log: query: ${endpoint}`);
   app.get(endpoint, viewer.handleResponse);
 };
 
 
 viewer.start = function() {
-  this.verbose(`start: ${localStorage.url}`);
+  this.log(`start: ${localStorage.url}`);
   if (!localStorage.url) {
     console.warn('Gateway token unset');
-    window.location = 'index.html';
+    window.location = app.loginUrl;
   } else {
     this.query();
   }
