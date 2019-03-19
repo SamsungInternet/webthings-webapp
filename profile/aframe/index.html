@@ -9,7 +9,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
     <script>var app = { viewer: {} }; </script>
     <script src="js/index.js"></script>
     <script src="js/aframe/index.js"></script>
@@ -25,8 +25,8 @@ AFRAME.registerComponent('root', {
 
 AFRAME.registerComponent('console', {
   init: function () {
-    app.viewer.log = this.el;
-    app.viewer.verbose(document.location);
+    app.viewer.console = this.el;
+    app.viewer.log(document.location);
   }
 }
 );
