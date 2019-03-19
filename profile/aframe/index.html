@@ -19,28 +19,26 @@ AFRAME.registerComponent('root', {
   init: function () {
     app.viewer.root = this.el;
     app.viewer.start();
-    }
   }
-);
+});
 
 AFRAME.registerComponent('console', {
   init: function () {
     app.viewer.console = this.el;
     app.viewer.log(document.location);
   }
-}
-);
+});
     </script>
   </head>
   <body>
-    <a-scene background="color: #ECECEC">
+    <a-scene background="color: #808080">
       <a-entity root />
       <a-text id="console" console
               value="console:"
               position="0 -2 0"
               rotation="-90 0 0"
               scale="4 4 4"
-              color="#808080"
+              color="#ECECEC"
               />
     </a-scene>
   </body>
