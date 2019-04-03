@@ -10,9 +10,10 @@
   <head>
     <meta charset="utf-8" />
     <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/TizenTeam/aframe-ui-widgets@sandbox/rzr/master/dist/aframe-ui-widgets.min.js"></script>
     <script>var app = { viewer: {} }; </script>
+    <script src="../../js/index.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/aframe/index.js"></script>
 
     <script>
 AFRAME.registerComponent('root', {
@@ -20,26 +21,25 @@ AFRAME.registerComponent('root', {
     app.viewer.root = this.el;
     app.viewer.start();
   }
-});
-
-AFRAME.registerComponent('console', {
-  init: function () {
-    app.viewer.console = this.el;
-    app.viewer.log(document.location);
   }
-});
+);
     </script>
   </head>
   <body>
-    <a-scene background="color: #808080">
-      <a-entity root />
-      <a-text id="console" console
-              value="console:"
+    <a-scene background="color: #000">
+      <a-entity root></a-entity>
+      <a-text id="console"
               position="0 -2 0"
               rotation="-90 0 0"
-              scale="4 4 4"
-              color="#ECECEC"
-              />
+              color="#808080"
+              ></a-text>
+      <a-entity laser-controls="hand: right"></a-entity>
+      <a-entity laser-controls="hand: left"></a-entity>
+      <a-entity>
+        <a-camera raycaster look-controls-enabled wasd-controls-enabled>
+          <a-entity cursor="rayOrigin: mouse"></a-entity>
+        </a-camera>
+      </a-entity>
     </a-scene>
   </body>
 </html>
