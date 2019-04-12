@@ -8,7 +8,7 @@
  */
 
 (function() {
-  app.auto = false;
+  app.auto = true;
   app.isLoading = true;
   app.localStorage = localStorage;
   app.devel = !false;
@@ -66,7 +66,7 @@
     if (localStorage.auto || confirm(`Redirect to: ${location}`)) {
       setTimeout(function() {
         window.location = location;
-      }, 1000);
+      }, app.defaultDelay);
     }
   };
 
