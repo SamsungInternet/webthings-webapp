@@ -585,7 +585,6 @@ ${window.location.pathname}`;
     }
 
     const radios = document.getElementsByName('viewer');
-    console.log(localStorage);
     if (radios) {
       for (const idx in radios) {
         radios[idx].onclick = function() {
@@ -597,6 +596,11 @@ ${window.location.pathname}`;
           radios[idx].checked = (localStorage.viewerUrl === radios[idx].value);
         }
       } else {
+        for (const idx in radios) {
+          if (app.viewerUrl === radios[idx].value) {
+            radios[idx].checked = true;
+          }
+        }
         for (const idx in radios) {
           if (radios[idx].checked) {
             localStorage.viewerUrl = radios[idx].value;
