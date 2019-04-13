@@ -584,26 +584,15 @@ ${window.location.pathname}`;
       }
     }
 
-    const radios = document.getElementsByName('viewer');
-    if (radios) {
-      for (const idx in radios) {
-        radios[idx].onclick = function() {
-          localStorage.viewerUrl = this.value;
-        };
-      }
+    const viewerInput = document.getElementById('viewer');
+    if (viewerInput) {
+      viewerInput.addEventListener('change', function() {
+        localStorage.viewerUrl = this.options[this.selectedIndex].value;
+      });
       if (localStorage.viewerUrl) {
-        for (const idx in radios) {
-          radios[idx].checked = (localStorage.viewerUrl === radios[idx].value);
-        }
-      } else {
-        for (const idx in radios) {
-          if (app.viewerUrl === radios[idx].value) {
-            radios[idx].checked = true;
-          }
-        }
-        for (const idx in radios) {
-          if (radios[idx].checked) {
-            localStorage.viewerUrl = radios[idx].value;
+        for (var idx in viewerInput.options) {
+          if (localStorage.viewerUrl === viewerInput.options[idx].value) {
+            viewerInput.selectedIndex = idx;
           }
         }
       }
